@@ -1,0 +1,49 @@
+{
+  "name": "ruoyi",
+  "version": "1.0.0",
+  "description": "企梦内部管理系统",
+  "main": "main.js",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^22.0.1",
+    "electron-builder": "^22.10.3",
+    "electron-packager": "^17.1.1"
+  },
+
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64",
+    "mac": "electron-builder --mac --x64",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
+  },
+  "build": {
+    "productName": "企梦内部管理系统",
+    "appId": "my-electron",
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "icon": "./images/logo.png"
+    },
+    "win": {
+      "icon": "./images/logo.png",
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "config": {
+    "forge": "./forge.config.js"
+  },
+  "publish": [],
+  "dependencies": {
+    "@electron-forge/cli": "^6.0.4",
+    "update-electron-app": "^2.0.1"
+  }
+}
