@@ -1,5 +1,9 @@
-const { app, BrowserWindow,Menu,Tray,shell,dialog} = require('electron')
+const { app, BrowserWindow,Menu,Tray,shell,dialog} = require('electron');
 const path = require('path');
+
+const Store = require('electron-store');
+const store = new Store();
+
 var mainWindow;
 var appTray;  //系统图盘显示
 function createWindow () {
@@ -14,8 +18,6 @@ function createWindow () {
       preload: path.join(__dirname, 'preload.js')
     }
   })
-
-
   const template = [
     {
         label: '实用工具',
@@ -41,20 +43,40 @@ function createWindow () {
          }
     },
     {
-        label: '检查更新',
+        label: '客户端更新',
           click: () => {
+            console.log(process.env.npm_package_version,'0versionversionversion') //检查版本更新
+            var btn_text = 0;
+            var message_text = 0;
+
+            if(!store.get('version')){  //没有先添加
+              store.set('version', process.env.npm_package_version);
+              console.log(store.get('version'),'meiyou========');
+            }else{
+              if(store.get('version') !== process.env.npm_package_version){
+                btn_text = 1;
+                message_text = 1;
+              }else{
+                btn_text = 0;
+                message_text = 0;
+              }
+              console.log(store.get('version'),'========version');
+            }
             dialog.showMessageBox(mainWindow,{
               title:"检查更新",
               type:'question',
-              message:`当前已是最新版本，无需更新软件！`,
+              message:message_text == 0?`当前已是最新版本，无需更新软件！`:`检测客户端有新的安装包。是否下载更新！`,
               noLink:true,
-              buttons:['下载','取消'],
+              buttons:btn_text == 0?['确定']:['下载','取消'],
             }).then(res=>{
-              if(res.response == 0){ //下载
-                getUpdate()
-                // shell.openExternal('http://192.168.0.111:9090/qmms/20230111/87eb4437e10342ec8101de59ea345723.png')
+              if(res.response == 0 && btn_text !== 0){ //下载
+                store.set('version', process.env.npm_package_version);
+                if(process.platform == 'darwin'){ //mac
+                  shell.openExternal('http://192.168.0.214:30079/client/企梦内部管理系统.dmg')
+                }else{ //window
+                  shell.openExternal('http://192.168.0.214:30079/client/企梦内部管理系统.exe')
+                }
               }
-              console.log(res,'==========.')
             })
          }
     }
